@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정예현 & 정이성 결혼파티</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Pretendard',sans-serif;
+  background:linear-gradient(to bottom,#faf7f2,#f3ece3);
+  text-align:center;
+  color:#3a3a3a;
+}
+
+.section{padding:80px 25px 60px;}
+
+.intro{
+  opacity:0;
+  transform:translateY(25px);
+  animation:fadeIn 1.5s ease forwards;
+}
+@keyframes fadeIn{
+  to{opacity:1; transform:translateY(0);}
+}
+
+h1{font-size:32px; letter-spacing:2px;}
+h2{font-size:20px; font-weight:400; color:#7b6f63;}
+
+.date{font-size:15px; opacity:0.8;}
+.location{font-size:14px; opacity:0.8;}
+
+.introduce{
+  margin-top:35px;
+  font-size:16px;
+  line-height:1.8;
+  color:#5c5248;
+}
+
+.slider{
+  position:relative;
+  width:100%;
+  height:440px;
+  overflow:hidden;
+  border-radius:24px;
+  margin-top:40px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  background:#000;
+}
+
+.slides{
+  display:flex;
+  width:100%;
+  height:100%;
+  transition:transform 0.8s ease-in-out;
+}
+
+.slides img{
+  min-width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.thumbnail-gallery{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+.thumbnail-gallery img{
+  width:80px;
+  height:80px;
+  object-fit:cover;
+  border-radius:14px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.button-box{
+  margin:60px 25px 80px;
+}
+
+.main-button{
+  width:100%;
+  padding:18px;
+  margin-top:16px;
+  border:none;
+  border-radius:20px;
+  background:#d4bfa5;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+}
+
+.lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+  flex-direction:column;
+}
+
+.lightbox img{
+  max-width:95%;
+  max-height:85%;
+  object-fit:contain;
+  border-radius:16px;
+}
+
+.nav-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:34px;
+  color:white;
+  background:none;
+  border:none;
+}
+
+.prev{left:20px;}
+.next{right:20px;}
+</style>
+</head>
+
+<body>
+
+<div class="section intro">
+  <h1>결혼파티</h1>
+  <h2>정예현 🤍 정이성</h2>
+  <div class="date">2026.05.02 (토) 오후 2시 ~ 4시</div>
+  <div class="location">한강대로 7길 17-8 (카페슈스)</div>
+
+  <div class="introduce">
+    저희 결혼하기로했어요! <br>
+    같이 즐겁게 파티해요! 🤍
+  </div>
+
+  <div class="slider">
+    <div class="slides" id="slides"></div>
+  </div>
+
+  <div class="thumbnail-gallery" id="thumbs"></div>
+</div>
+
+<div class="button-box">
+  <button class="main-button"
+    onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScDXAGiyCycHji9RHtDmZ9-J1fvWjGe6aYEvKY6p8s1MR11-Q/viewform')">
+    참석 여부 전달하기 🤍
+  </button>
+
+  <button class="main-button"
+    onclick="window.open('https://map.naver.com/v5/search/한강대로%207길%2017-8')">
+    네이버 지도 열기 📍
+  </button>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button class="nav-btn prev" onclick="prevImage()">‹</button>
+  <img id="lightbox-img">
+  <button class="nav-btn next" onclick="nextImage()">›</button>
+</div>
+
+<audio id="bgm" src="dmb.mp3" preload="auto"></audio>
+
+<script>
+const slidesContainer=document.getElementById("slides");
+const thumbsContainer=document.getElementById("thumbs");
+
+/* 🔥 35장 생성 */
+for(let i=1;i<=35;i++){
+  const img=document.createElement("img");
+  img.src=`photo${i}.jpg`;
+  slidesContainer.appendChild(img);
+
+  const thumb=document.createElement("img");
+  thumb.src=`photo${i}.jpg`;
+  thumb.onclick=()=>goToSlide(i-1);
+  thumbsContainer.appendChild(thumb);
+}
+
+const images=document.querySelectorAll(".slides img");
+const total=images.length;
+let index=0;
+
+/* 자동 슬라이드 */
+setInterval(()=>{
+  index=(index+1)%total;
+  slidesContainer.style.transform=`translateX(-${index*100}%)`;
+},3000);
+
+function goToSlide(i){
+  index=i;
+  slidesContainer.style.transform=`translateX(-${index*100}%)`;
+}
+
+/* 확대 */
+let currentIndex=0;
+const lightbox=document.getElementById("lightbox");
+const lightboxImg=document.getElementById("lightbox-img");
+
+images.forEach((img,i)=>{
+  img.addEventListener("click",()=>{
+    currentIndex=i;
+    showImage();
+    lightbox.style.display="flex";
+  });
+});
+
+function showImage(){
+  lightboxImg.src=images[currentIndex].src;
+}
+
+function prevImage(){
+  currentIndex=(currentIndex-1+total)%total;
+  showImage();
+}
+
+function nextImage(){
+  currentIndex=(currentIndex+1)%total;
+  showImage();
+}
+
+lightbox.addEventListener("click",(e)=>{
+  if(e.target===lightbox){
+    lightbox.style.display="none";
+  }
+});
+
+/* 🎵 음악 */
+const bgm=document.getElementById("bgm");
+bgm.volume=0.25;
+
+document.body.addEventListener("click",()=>{
+  bgm.currentTime=160;
+  bgm.play();
+},{once:true});
+
+bgm.addEventListener("timeupdate",()=>{
+  if(bgm.currentTime>=250){
+    bgm.currentTime=160;
+  }
+});
+</script>
+
+</body>
+</html>
